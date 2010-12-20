@@ -1,0 +1,4 @@
+== LBLS - LIWC But Less Shitty ==
+Zoey had to use this terrible program called LIWC (http://www.liwc.net/). It
+kept fucking up when she tried to parse multiple files at once, so I wrote a
+Python clone in an hour or so.

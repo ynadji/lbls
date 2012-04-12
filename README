@@ -2,3 +2,17 @@
 Zoey had to use this terrible program called LIWC (http://www.liwc.net/). It
 kept fucking up when she tried to parse multiple files at once, so I wrote a
 Python clone in an hour or so.
+
+lbls.py expects a LIWC dictionary file (liwcdict.txt in repository) and an
+input file of two columns. The first column contains an identifier and the
+second column contains text with which is processed as LIWC processes text. The
+LIWC data frame is output to stdout.
+
+== sample_input.txt ==
+1       This cruise sucked dude. Do not buy cruises from these people.
+3       "We went on a cruise and it was awful. ..."
+4       "The cruise was a big disappointment. ..."
+...
+
+= Running =
+$ ./lbls.py liwcdict.txt sample_input.txt > sample_input.liwc.txt

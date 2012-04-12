@@ -112,7 +112,7 @@ def main():
 
     print('\t'.join(columntitles))
     with open(args[1]) as f:
-        lines = [x.replace('\r', ' ').replace('\n', ' ') for x in f.read().split('\r\n')]
+        lines = [x.replace('\r', ' ').replace('\n', ' ') for x in f.readlines()]
 
     for line in lines:
         wordcount = 0

@@ -71,7 +71,7 @@ def tabulate_results(reviewnum, indices, catresults, otherresults):
     for key in otherresults.keys():
         row[indices[key]] = otherresults[key]
 
-    return '\t'.join(['0' if x is None else str(x) for x in row])
+    return ['0' if x is None else str(x) for x in row]
 
 def punctuation(line):
     otherp = r'@#$%^&*_+={}[]\|/><~`'
@@ -89,6 +89,57 @@ def punctuation(line):
     res['AllPct'] = sum(res.values())
 
     return res
+
+def getcolumntitles(liwcdict):
+    header = ['Segment', 'WC', 'WPS', 'Sixltr', 'Dic']
+    footer = ['Period', 'Comma', 'Colon', 'SemiC', 'QMark', 'Exclam',
+              'Dash', 'Quote', 'Apostro', 'Parenth', 'OtherP',  'AllPct']
+
+    regex = re.compile(r'\s+')
+
+    # do stuff
+    cats, catmap, d = parsedict(liwcdict)
+    return header + cats + footer
+
+def lbls(liwcdict, text):
+    header = ['Filename', 'Segment', 'WC', 'WPS', 'Sixltr', 'Dic']
+    footer = ['Period', 'Comma', 'Colon', 'SemiC', 'QMark', 'Exclam',
+              'Dash', 'Quote', 'Apostro', 'Parenth', 'OtherP',  'AllPct']
+
+    regex = re.compile(r'\s+')
+
+    # do stuff
+    cats, catmap, d = parsedict(liwcdict)
+    columntitles = header + cats + footer
+    indices = dict(zip(columntitles, count(0)))
+
+    wordcount = 0
+    sixletter = 0
+    numsentences = 0
+    results = []
+        
+    otherresults = punctuation(text)
+
+    for word in re.split(regex, text):
+        if len(normalize(word)) >= 6:
+            sixletter += 1
+        if word.endswith('.') or word.endswith('!') or word.endswith('?'):
+            numsentences += 1
+        wordcount += 1
+        results.append(categories(catmap, d, word))
+    try:
+        wps = float(wordcount) / numsentences
+    except ZeroDivisionError:
+        wps = 1
+    try:
+        sixletter = float(sixletter) / wordcount
+    except ZeroDivisionError:
+        sixletter = 0.0
+
+    otherresults.update({'WC': wordcount, 'Dic': 0, 'Segment': 1,
+        'Sixltr': sixletter, 'WPS': wps})
+    # ignore first result which is the review number
+    return tabulate_results(0, indices, results, otherresults)[1:]
 
 def main():
     """main function for standalone usage"""
@@ -145,7 +196,7 @@ def main():
 
         otherresults.update({'WC': wordcount, 'Dic': 0, 'Segment': 1,
             'Sixltr': sixletter, 'WPS': wps})
-        print(tabulate_results(reviewnum, indices, results, otherresults))
+        print('\t'.join(tabulate_results(reviewnum, indices, results, otherresults)))
 
 if __name__ == '__main__':
     sys.exit(main())
